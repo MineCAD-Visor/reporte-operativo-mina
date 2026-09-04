@@ -86,7 +86,7 @@ function bindForm(name) {
       return;
     }
 
-    // Los demás módulos siguen siendo provisionales
+    // Los demás módulos todavía trabajan únicamente en memoria.
     state[name].push(data);
 
     form.reset();
@@ -97,35 +97,40 @@ function bindForm(name) {
 
 async function guardarDisparo(data, form) {
   const submitButton = form.querySelector('button[type="submit"]');
-
   const textoOriginal = submitButton.textContent;
 
   submitButton.disabled = true;
-  submitButton.textContent = 'Guardando...';
+  submitButton.textContent = 'Enviando...';
+
+  const payload = {
+    fecha: data.fecha,
+    mina: data.mina,
+    turno: data.turno,
+    obra: data.obra,
+    tipo: data.tipo,
+    metros: data.metros || '',
+    resultado: data.resultado || '',
+    observaciones: data.observaciones || ''
+  };
 
   try {
-    const response = await fetch(API_URL, {
+    /*
+      Google Apps Script no devuelve encabezados CORS adecuados
+      para que GitHub Pages pueda leer normalmente la respuesta.
+
+      no-cors permite realizar el POST sin que el navegador
+      bloquee el envío.
+
+      IMPORTANTE:
+      En este modo no podemos leer el JSON que devuelve Apps Script.
+      Por eso posteriormente verificaremos el registro directamente
+      contra Google Sheets.
+    */
+    await fetch(API_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-      },
-      body: JSON.stringify({
-        fecha: data.fecha,
-        mina: data.mina,
-        turno: data.turno,
-        obra: data.obra,
-        tipo: data.tipo,
-        metros: data.metros || '',
-        resultado: data.resultado || '',
-        observaciones: data.observaciones || ''
-      })
+      mode: 'no-cors',
+      body: JSON.stringify(payload)
     });
-
-    const resultado = await response.json();
-
-    if (!resultado.ok) {
-      throw new Error(resultado.mensaje || 'El servidor rechazó el registro.');
-    }
 
     state.disparos.push(data);
 
@@ -133,14 +138,17 @@ async function guardarDisparo(data, form) {
     renderRecords('disparos');
     updateCounters();
 
-    alert('Disparo guardado correctamente.');
+    alert(
+      'Registro enviado.\n\n' +
+      'Comprueba la hoja DISPAROS para confirmar la recepción.'
+    );
 
   } catch (error) {
-    console.error(error);
+    console.error('Error enviando el disparo:', error);
 
     alert(
-      'No fue posible guardar el disparo.\n\n' +
-      'Revisa la conexión o la implementación de Apps Script.'
+      'No fue posible enviar el registro.\n\n' +
+      'Revisa la conexión a Internet e inténtalo nuevamente.'
     );
 
   } finally {
@@ -183,7 +191,9 @@ function recordSummary(name, item) {
 
   return `
     <strong>${item.trabajador}</strong><br>
-    <small>${item.puesto} · ${item.motivo}</small>
+    <small>
+      ${item.puesto} · ${item.motivo}
+    </small>
   `;
 }
 
@@ -208,7 +218,10 @@ function renderRecords(name) {
 
   container.innerHTML = filtered.map(item => `
     <div class="record">
-      <p>${recordSummary(name, item)}</p>
+
+      <p>
+        ${recordSummary(name, item)}
+      </p>
 
       <button
         type="button"
@@ -217,11 +230,13 @@ function renderRecords(name) {
       >
         Eliminar
       </button>
+
     </div>
   `).join('');
 
   container.querySelectorAll('[data-delete]').forEach(button => {
     button.addEventListener('click', () => {
+
       const module = button.dataset.module;
 
       state[module] = state[module].filter(
@@ -248,26 +263,30 @@ function updateCounters() {
     state.ausentismo.length;
 }
 
-[mina, fecha, turno].forEach(el =>
+[mina, fecha, turno].forEach(el => {
   el.addEventListener('change', () => {
+
     setupComplete();
 
     if (!workspace.classList.contains('hidden')) {
       workspace.classList.add('hidden');
     }
-  })
-);
+
+  });
+});
 
 document.getElementById('closeShift').addEventListener('click', () => {
+
   if (!setupComplete()) return;
 
   const total = Object.values(state)
     .reduce((sum, records) => sum + records.length, 0);
 
   alert(
-    `Reporte de ${mina.value}, ${turno.value}, ${fecha.value}.\n` +
+    `Reporte de ${mina.value}, ${turno.value}, ${fecha.value}.\n\n` +
     `Registros capturados en esta sesión: ${total}.`
   );
+
 });
 
 setupComplete();
