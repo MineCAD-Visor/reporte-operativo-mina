@@ -1,3 +1,5 @@
+const API_URL = "https://script.google.com/macros/s/AKfycbw5Sx3tbAGdOJm8i72ce7lTrnFQLFdbntmePmpxLY05j_xA_10eXQIYMUdLMfUVO2c0/exec";
+
 let CATALOGOS = null;
 
 const state = {
@@ -16,6 +18,7 @@ const drillTipo = document.getElementById("drillTipo");
 const drillMl = document.getElementById("drillMl");
 const drillM3 = document.getElementById("drillM3");
 const drillMaterial = document.getElementById("drillMaterial");
+const saveReportButton = document.getElementById("saveReport");
 
 fecha.value = new Date().toISOString().slice(0, 10);
 
@@ -35,7 +38,7 @@ function escapeHtml(value) {
 
 async function loadCatalogs() {
   try {
-    const response = await fetch("catalogos.json?v=2", { cache: "no-store" });
+    const response = await fetch("catalogos.json?v=3", { cache: "no-store" });
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
@@ -154,15 +157,15 @@ function applyMineralStyle(container, material) {
 
 function validateHeader() {
   if (!mina.value || !fecha.value || !turno.value || !responsable.value.trim()) {
-    alert("Completa Mina, Fecha, Turno y Supervisor/Jefe de mina antes de cerrar el reporte.");
+    alert("Completa Mina, Fecha, Turno y Supervisor/Jefe de mina.");
     return false;
   }
   return true;
 }
 
-/* =========================
+/* =========================================================
    CÁLCULO DE TONELAJE
-   ========================= */
+   ========================================================= */
 
 function getMaterialParams(material) {
   return CATALOGOS?.parametrosMaterial?.[material] || null;
@@ -195,14 +198,12 @@ function calculateTons(equipment, material, movements) {
     return null;
   }
 
-  const capacidadM3 = capacidadYd3 * yd3ToM3;
-
-  return movements * capacidadM3 * densidadTonM3 * factorLlenado;
+  return movements * capacidadYd3 * yd3ToM3 * densidadTonM3 * factorLlenado;
 }
 
-/* =========================
+/* =========================================================
    BARRENACIÓN
-   ========================= */
+   ========================================================= */
 
 function addDrillingRow() {
   const obra = document.getElementById("drillObra").value.trim();
@@ -280,9 +281,9 @@ function renderDrillingRows() {
   });
 }
 
-/* =========================
+/* =========================================================
    REZAGADO Y ACARREO
-   ========================= */
+   ========================================================= */
 
 function getEquipment(name) {
   const equipos = getMineConfig()?.equipos || [];
@@ -412,9 +413,9 @@ function updateHaulTotals() {
       : `${extraction.toFixed(1)} t`;
 }
 
-/* =========================
+/* =========================================================
    ESTADO DE EQUIPOS
-   ========================= */
+   ========================================================= */
 
 function reasonOptions(selected = "") {
   const reasons = CATALOGOS?.motivosFueraServicio || [];
@@ -561,9 +562,9 @@ function renderEquipmentRows() {
   });
 }
 
-/* =========================
+/* =========================================================
    ACARREO A PLANTA
-   ========================= */
+   ========================================================= */
 
 function addPlantHaulRow() {
   const toneladas = Number(document.getElementById("plantTons").value);
@@ -626,9 +627,9 @@ function renderPlantRows() {
     `${total.toFixed(2)} t`;
 }
 
-/* =========================
-   VALIDACIÓN / RESUMEN
-   ========================= */
+/* =========================================================
+   VALIDACIÓN DEL REPORTE
+   ========================================================= */
 
 function validateEquipmentStatus() {
   if (!mina.value) return true;
@@ -658,6 +659,10 @@ function validateEquipmentStatus() {
   return true;
 }
 
+/* =========================================================
+   CONSTRUCCIÓN DEL OBJETO DEL REPORTE
+   ========================================================= */
+
 function buildReportObject() {
   return {
     encabezado: {
@@ -668,7 +673,9 @@ function buildReportObject() {
     },
 
     barrenacion: state.barrenacion,
+
     rezagadoAcarreo: state.acarreoInterno,
+
     estadoEquipos: state.estadoEquipos[mina.value] || {},
 
     stopeMate:
@@ -696,50 +703,93 @@ function buildReportObject() {
   };
 }
 
-function handleReportSubmit(event) {
+/* =========================================================
+   ENVÍO A GOOGLE APPS SCRIPT
+   ========================================================= */
+
+async function sendReport(report) {
+  await fetch(API_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify(report)
+  });
+}
+
+/* =========================================================
+   GUARDAR REPORTE COMPLETO
+   ========================================================= */
+
+async function handleReportSubmit(event) {
   event.preventDefault();
 
   if (!validateHeader()) return;
   if (!validateEquipmentStatus()) return;
 
   const report = buildReportObject();
-  console.log("REPORTE PROVISIONAL:", report);
 
-  const plant = state.acarreoPlanta.reduce(
-    (sum, x) => sum + x.toneladas,
-    0
-  );
+  const textoOriginal = saveReportButton.textContent;
 
-  const moved = state.acarreoInterno.reduce(
-    (sum, x) => sum + (Number.isFinite(x.toneladas) ? x.toneladas : 0),
-    0
-  );
+  saveReportButton.disabled = true;
+  saveReportButton.textContent = "Enviando...";
 
-  const destinoPatio =
-    CATALOGOS?.destinoOficialPatio?.[mina.value] || "Patio Superficie";
+  try {
+    await sendReport(report);
 
-  const extraction = state.acarreoInterno
-    .filter(x => x.destino === destinoPatio)
-    .reduce(
-      (sum, x) => sum + (Number.isFinite(x.toneladas) ? x.toneladas : 0),
-      0
+    alert(
+      "Reporte enviado.\n\n" +
+      "La información fue enviada al sistema de registro. " +
+      "Puedes verificarla en Google Sheets."
     );
 
-  alert(
-    `Reporte validado localmente.\n\n` +
-    `${report.encabezado.mina} · ${report.encabezado.turno} · ${report.encabezado.fecha}\n` +
-    `Barrenación: ${report.barrenacion.length} registros\n` +
-    `Rezagado/acarreos: ${report.rezagadoAcarreo.length} registros\n` +
-    `Toneladas movidas estimadas: ${moved.toFixed(1)} t\n` +
-    `Extracción estimada a patio: ${extraction.toFixed(1)} t\n` +
-    `Enviado a planta: ${plant.toFixed(1)} t\n\n` +
-    `Todavía no se envió a Google Sheets.`
-  );
+  } catch (error) {
+    console.error("Error enviando reporte:", error);
+
+    alert(
+      "No fue posible enviar el reporte.\n\n" +
+      "Revisa la conexión a Internet e inténtalo nuevamente."
+    );
+
+  } finally {
+    saveReportButton.disabled = false;
+    saveReportButton.textContent = textoOriginal;
+  }
 }
 
-/* =========================
+
+/* =========================================================
+   BLOQUEO DE ENVÍO ACCIDENTAL CON ENTER
+   ========================================================= */
+
+document
+  .getElementById("shiftReport")
+  .addEventListener("keydown", event => {
+
+    if (event.key !== "Enter") return;
+
+    const target = event.target;
+
+    /*
+      En el campo de comentarios generales sí se permite Enter
+      para insertar saltos de línea.
+    */
+    if (
+      target &&
+      target.tagName === "TEXTAREA" &&
+      target.id === "generalComments"
+    ) {
+      return;
+    }
+
+    /*
+      En cualquier otro control del formulario, Enter no debe
+      interpretarse como Guardar reporte.
+    */
+    event.preventDefault();
+  });
+
+/* =========================================================
    EVENTOS
-   ========================= */
+   ========================================================= */
 
 mina.addEventListener("change", handleMineChange);
 drillTipo.addEventListener("change", updateDrillingMeasureFields);
@@ -775,5 +825,9 @@ document
 document
   .getElementById("shiftReport")
   .addEventListener("submit", handleReportSubmit);
+
+/* =========================================================
+   INICIO
+   ========================================================= */
 
 loadCatalogs();
