@@ -1,0 +1,146 @@
+{
+  "minas": {
+    "Santa Maria": {
+      "equipos": [
+        {
+          "nombre": "Scooptram 06",
+          "tipo": "Scooptram",
+          "capacidadYd3": 3.5
+        },
+        {
+          "nombre": "Scooptram 09",
+          "tipo": "Scooptram",
+          "capacidadYd3": 3.5
+        },
+        {
+          "nombre": "Scooptram 11",
+          "tipo": "Scooptram",
+          "capacidadYd3": 3.5
+        },
+        {
+          "nombre": "Scooptram 12",
+          "tipo": "Scooptram",
+          "capacidadYd3": 3.5
+        },
+        {
+          "nombre": "Scooptram 20",
+          "tipo": "Scooptram",
+          "capacidadYd3": 3.5
+        },
+        {
+          "nombre": "Camión 22",
+          "tipo": "Camión",
+          "capacidadYd3": 10.0
+        },
+        {
+          "nombre": "Camión 24",
+          "tipo": "Camión",
+          "capacidadYd3": 10.0
+        },
+        {
+          "nombre": "Camión 26",
+          "tipo": "Camión",
+          "capacidadYd3": 10.0
+        }
+      ],
+      "obras": [],
+      "lugares": [
+        "FTE 1910 PTE",
+        "RPA 5020 PTE",
+        "RPA 5020 OTE",
+        "AMPL 5020 OTE CHORROS",
+        "C/P VENTILACION 1910",
+        "RPA GENERAL 480",
+        "C/P 5020 PTE N-38",
+        "ACCESO 1895 PTE",
+        "ACCESO 1895 OTE",
+        "FTE 1930 PTE",
+        "RPA (+) 1895 5020",
+        "C/RPA 5020",
+        "Camión",
+        "Patio Superficie"
+      ]
+    },
+    "Unificación/Hallazgo": {
+      "equipos": [
+        {
+          "nombre": "Scooptram 03",
+          "tipo": "Scooptram",
+          "capacidadYd3": 3.5
+        },
+        {
+          "nombre": "Scooptram 04",
+          "tipo": "Scooptram",
+          "capacidadYd3": 3.5
+        },
+        {
+          "nombre": "Scooptram 05",
+          "tipo": "Scooptram",
+          "capacidadYd3": 3.5
+        },
+        {
+          "nombre": "Scooptram 07",
+          "tipo": "Scooptram",
+          "capacidadYd3": 3.5
+        },
+        {
+          "nombre": "Camión 07",
+          "tipo": "Camión",
+          "capacidadYd3": 10.0
+        },
+        {
+          "nombre": "Camión 11",
+          "tipo": "Camión",
+          "capacidadYd3": 10.0
+        },
+        {
+          "nombre": "Camión 12",
+          "tipo": "Camión",
+          "capacidadYd3": 10.0
+        },
+        {
+          "nombre": "Camión 25",
+          "tipo": "Camión",
+          "capacidadYd3": 10.0
+        }
+      ],
+      "obras": [],
+      "lugares": [
+        "C/P 1880-1795",
+        "C/P 280-1781",
+        "RPA GENERAL 1750",
+        "C/P 260-1781",
+        "SILL 150-1780",
+        "Camión",
+        "Patio Superficie"
+      ]
+    }
+  },
+  "motivosFueraServicio": [
+    "Ponchadura",
+    "Falla mecánica",
+    "Falla eléctrica",
+    "Servicio programado",
+    "Mantenimiento preventivo",
+    "Esperando refacción",
+    "Accidente / daño",
+    "Otro"
+  ],
+  "destinoOficialPatio": {
+    "Santa Maria": "Patio Superficie",
+    "Unificación/Hallazgo": "Patio Superficie"
+  },
+  "parametrosMaterial": {
+    "Mineral": {
+      "densidadTonM3": 2.8,
+      "factorLlenado": 1.0
+    },
+    "Tepetate": {
+      "densidadTonM3": 2.5,
+      "factorLlenado": 1.0
+    }
+  },
+  "conversiones": {
+    "yd3_a_m3": 0.764554857984
+  }
+}
