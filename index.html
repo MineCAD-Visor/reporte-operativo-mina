@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operación Mina</title>
+  <style>
+    :root {
+      --bg: #f1f4f6;
+      --surface: #ffffff;
+      --text: #172027;
+      --muted: #68747d;
+      --line: #dce3e7;
+      --dark: #11181e;
+      --accent: #b67824;
+      --accent-dark: #895716;
+      --radius: 16px;
+      --shadow: 0 8px 24px rgba(21, 32, 40, .08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .topbar {
+      background: var(--dark);
+      color: white;
+      padding: 26px clamp(18px, 5vw, 54px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .15);
+    }
+    .eyebrow {
+      margin: 0 0 4px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: 11px;
+      color: #aeb8bf;
+      font-weight: 800;
+    }
+    h1 { margin: 0; font-size: clamp(28px, 5vw, 42px); }
+    .subtitle { margin: 8px 0 0; color: #c9d1d6; font-size: 14px; }
+    main { width: min(980px, calc(100% - 24px)); margin: 34px auto 60px; }
+    .intro { margin-bottom: 18px; }
+    .intro h2 { margin: 0 0 5px; font-size: 22px; }
+    .intro p { margin: 0; color: var(--muted); font-size: 14px; }
+    .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .menu-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .menu-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 11px 30px rgba(21, 32, 40, .12);
+      border-color: #c8d1d7;
+    }
+    .menu-card .number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--dark);
+      color: white;
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+    .menu-card h3 { margin: 0 0 7px; font-size: 23px; }
+    .menu-card p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 14px; }
+    .menu-card .action {
+      display: inline-block;
+      margin-top: 22px;
+      color: var(--accent-dark);
+      font-weight: 900;
+      font-size: 13px;
+    }
+    @media (max-width: 700px) {
+      main { margin-top: 18px; }
+      .menu-grid { grid-template-columns: 1fr; }
+      .menu-card { padding: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <p class="eyebrow">Control operativo</p>
+    <h1>Operación Mina</h1>
+    <p class="subtitle">Captura y visualización de reportes operativos</p>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h2>Selecciona una opción</h2>
+      <p>Accede a la captura de turno o al visor de información operativa.</p>
+    </section>
+
+    <section class="menu-grid">
+      <a class="menu-card" href="captura.html">
+        <span class="number">1</span>
+        <h3>Captura de reporte</h3>
+        <p>Registrar barrenación, rezagado y acarreo, estado de equipos, Stope Mate, barreno de servicio y acarreo a planta.</p>
+        <span class="action">Abrir captura →</span>
+      </a>
+
+      <a class="menu-card" href="dashboard.html">
+        <span class="number">2</span>
+        <h3>Dashboard</h3>
+        <p>Consultar resultados por mina y rango de fechas, con indicadores, gráficas y detalle de la operación.</p>
+        <span class="action">Abrir dashboard →</span>
+      </a>
+    </section>
+  </main>
+</body>
+</html>
