@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#11181e" />
+  <title>Planos Mina</title>
+  <style>
+    :root {
+      --bg: #f1f4f6;
+      --surface: #ffffff;
+      --surface-soft: #f7f9fa;
+      --text: #172027;
+      --muted: #68747d;
+      --line: #dce3e7;
+      --dark: #11181e;
+      --accent: #b67824;
+      --accent-dark: #895716;
+      --radius: 14px;
+      --shadow: 0 7px 22px rgba(21, 32, 40, .07);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .topbar {
+      background: var(--dark);
+      color: white;
+      padding: 20px clamp(16px, 4vw, 44px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,.15);
+    }
+
+    .eyebrow {
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .topbar .eyebrow { color: #aeb8bf; }
+
+    h1 {
+      margin: 2px 0 0;
+      font-size: clamp(24px, 4vw, 34px);
+    }
+
+    .back-link {
+      color: white;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 24px));
+      margin: 22px auto 60px;
+    }
+
+    .mine-selector {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .mine-selector h2 {
+      margin: 4px 0 14px;
+      font-size: 20px;
+    }
+
+    .mine-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .mine-button {
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      color: var(--text);
+      border-radius: 11px;
+      padding: 16px;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+    }
+
+    .mine-button.active {
+      border-color: var(--accent);
+      background: #fff7eb;
+      color: var(--accent-dark);
+    }
+
+    .selected-mine {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    details {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    summary h2 {
+      margin: 3px 0 0;
+      font-size: 20px;
+    }
+
+    .summary-hint {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .section-content {
+      padding: 0 20px 20px;
+      border-top: 1px solid var(--line);
+    }
+
+    .subheading {
+      margin: 18px 0 10px;
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      font-weight: 900;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .image-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface-soft);
+      overflow: hidden;
+    }
+
+    .image-card img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+      background: #e6ebee;
+    }
+
+    .image-card figcaption {
+      padding: 9px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .pdf-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .pdf-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      text-decoration: none;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--surface-soft);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .pdf-icon {
+      width: 28px;
+      height: 34px;
+      flex: 0 0 auto;
+      border-radius: 4px;
+      background: #c62828;
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .04em;
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 12px 0 4px;
+    }
+
+    .error {
+      background: #fff0f0;
+      color: #8e2525;
+      border: 1px solid #e6b9b9;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .image-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 650px) {
+      .mine-buttons,
+      .image-grid {
+        grid-template-columns: 1fr;
+      }
+
+      summary {
+        align-items: flex-start;
+      }
+
+      .summary-hint {
+        white-space: normal;
+        text-align: right;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Documentación gráfica</p>
+      <h1>Planos Mina</h1>
+    </div>
+    <a class="back-link" href="index.html">Menú principal</a>
+  </header>
+
+  <main>
+    <section class="mine-selector">
+      <p class="eyebrow">Selección</p>
+      <h2>Selecciona la mina</h2>
+
+      <div class="mine-buttons">
+        <button class="mine-button" type="button" data-mine="Santa Maria">
+          Santa Maria
+        </button>
+
+        <button class="mine-button" type="button" data-mine="Unificación/Hallazgo">
+          Unificación/Hallazgo
+        </button>
+      </div>
+    </section>
+
+    <p id="selectedMineText" class="selected-mine">
+      Selecciona una mina para visualizar sus archivos.
+    </p>
+
+    <section id="mineContent" hidden>
+      <details>
+        <summary>
+          <div>
+            <p class="eyebrow">Planos vigentes</p>
+            <h2>Topografía actualizada</h2>
+          </div>
+          <span class="summary-hint">Mostrar / ocultar</span>
+        </summary>
+        <div id="topografiaContent" class="section-content"></div>
+      </details>
+
+      <details>
+        <summary>
+          <div>
+            <p class="eyebrow">Seguimiento</p>
+            <h2>Proyectos prioritarios</h2>
+          </div>
+          <span class="summary-hint">Mostrar / ocultar</span>
+        </summary>
+        <div id="proyectosContent" class="section-content"></div>
+      </details>
+    </section>
+  </main>
+
+  <script>
+    const catalogUrl = "planos.json?v=3";
+
+    let catalog = {};
+    let selectedMine = "";
+
+    const mineContent = document.getElementById("mineContent");
+    const selectedMineText = document.getElementById("selectedMineText");
+    const topografiaContent = document.getElementById("topografiaContent");
+    const proyectosContent = document.getElementById("proyectosContent");
+    const mineButtons = [...document.querySelectorAll(".mine-button")];
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function encodePath(path) {
+      return path
+        .split("/")
+        .map(part => encodeURIComponent(part))
+        .join("/");
+    }
+
+    function fileName(path) {
+      return String(path || "").split("/").pop() || "";
+    }
+
+    function extension(path) {
+      const name = fileName(path).toLowerCase();
+      const dot = name.lastIndexOf(".");
+      return dot >= 0 ? name.slice(dot + 1) : "";
+    }
+
+    function sortFiles(files) {
+      return [...files].sort((a, b) =>
+        fileName(a).localeCompare(fileName(b), "es", { sensitivity: "base" })
+      );
+    }
+
+    function renderSection(container, files) {
+      const allFiles = Array.isArray(files) ? files : [];
+
+      const jpgs = sortFiles(
+        allFiles.filter(file => ["jpg", "jpeg"].includes(extension(file)))
+      );
+
+      const pdfs = sortFiles(
+        allFiles.filter(file => extension(file) === "pdf")
+      );
+
+      if (!jpgs.length && !pdfs.length) {
+        container.innerHTML =
+          '<p class="empty">Todavía no hay archivos registrados en esta sección.</p>';
+        return;
+      }
+
+      let html = "";
+
+      if (jpgs.length) {
+        html += '<h3 class="subheading">Imágenes</h3>';
+        html += '<div class="image-grid">';
+
+        jpgs.forEach(file => {
+          const href = encodePath(file);
+          const name = fileName(file);
+
+          html += `
+            <a class="image-card" href="${href}">
+              <figure style="margin:0">
+                <img src="${href}" alt="${escapeHtml(name)}" loading="lazy" />
+                <figcaption>${escapeHtml(name)}</figcaption>
+              </figure>
+            </a>
+          `;
+        });
+
+        html += "</div>";
+      }
+
+      if (pdfs.length) {
+        html += '<h3 class="subheading">PDF</h3>';
+        html += '<div class="pdf-list">';
+
+        pdfs.forEach(file => {
+          const href = encodePath(file);
+          const name = fileName(file);
+
+          html += `
+            <a class="pdf-link" href="${href}">
+              <span class="pdf-icon" aria-hidden="true">PDF</span>
+              <span>${escapeHtml(name)}</span>
+            </a>
+          `;
+        });
+
+        html += "</div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    function selectMine(mine) {
+      selectedMine = mine;
+
+      mineButtons.forEach(button => {
+        button.classList.toggle("active", button.dataset.mine === mine);
+      });
+
+      const data = catalog[mine] || {
+        topografia: [],
+        proyectos: []
+      };
+
+      selectedMineText.textContent = `Mina seleccionada: ${mine}`;
+      mineContent.hidden = false;
+
+      renderSection(topografiaContent, data.topografia);
+      renderSection(proyectosContent, data.proyectos);
+    }
+
+    mineButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        selectMine(button.dataset.mine);
+      });
+    });
+
+    async function init() {
+      try {
+        const response = await fetch(catalogUrl, { cache: "no-store" });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        catalog = await response.json();
+
+        const params = new URLSearchParams(window.location.search);
+        const mineParam = params.get("mina");
+
+        if (mineParam && catalog[mineParam]) {
+          selectMine(mineParam);
+        }
+
+      } catch (error) {
+        console.error(error);
+
+        const errorBox = document.createElement("div");
+        errorBox.className = "error";
+        errorBox.textContent =
+          "No fue posible cargar el catálogo de planos.";
+        document.querySelector("main").prepend(errorBox);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
