@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Operativo Mina</title>
+  <link rel="stylesheet" href="dashboard.css?v=10" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Control operativo</p>
+      <h1>Dashboard Operativo Mina</h1>
+    </div>
+    <a class="back-link" href="index.html">Volver</a>
+  </header>
+
+  <main class="container">
+    
+    <section class="security-panel">
+      <section class="module-header security-header">
+        <div>
+          <p class="eyebrow">Indicadores prioritarios</p>
+          <h2>Seguridad</h2>
+        </div>
+        <span id="safetyStatus" class="status-text">Cargando...</span>
+      </section>
+
+      <section class="safety-grid">
+        <article class="kpi-card safety-days">
+          <span>Días sin accidente Tipo A</span>
+          <strong id="kpiSafetyA">—</strong>
+          <small id="safetyDateA">Último accidente: —</small>
+        </article>
+
+        <article class="kpi-card safety-days">
+          <span>Días sin accidente Tipo B</span>
+          <strong id="kpiSafetyB">—</strong>
+          <small id="safetyDateB">Último accidente: —</small>
+        </article>
+
+        <article class="kpi-card safety-days safety-c">
+          <span>Días sin accidente Tipo C</span>
+          <strong id="kpiSafetyC">—</strong>
+          <small id="safetyDateC">Último accidente: —</small>
+        </article>
+
+        <article class="kpi-card safety-index">
+          <span>Índice de Frecuencia</span>
+          <strong id="kpiSafetyIF">0.000</strong>
+        </article>
+
+        <article class="kpi-card safety-index">
+          <span>Índice de Gravedad</span>
+          <strong id="kpiSafetyIG">0.000</strong>
+        </article>
+
+        <article class="kpi-card safety-index">
+          <span>Índice de Accidentabilidad</span>
+          <strong id="kpiSafetyIA">0.000</strong>
+        </article>
+      </section>
+
+      <section class="safety-grid-2">
+        <section class="safety-base card">
+          <div>
+            <span>Horas-hombre acumuladas</span>
+            <strong id="safetyHH">0</strong>
+          </div>
+          <div>
+            <span>Accidentes incapacitantes</span>
+            <strong id="safetyAccidents">0</strong>
+          </div>
+          <div>
+            <span>Días perdidos</span>
+            <strong id="safetyLostDays">0</strong>
+          </div>
+          <div>
+            <span>Días cargo</span>
+            <strong id="safetyChargeDays">0</strong>
+          </div>
+        </section>
+
+        <section class="card safety-calendar-card">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Estado del mes</p>
+              <h2 id="safetyCalendarTitle">Calendario de seguridad</h2>
+            </div>
+          </div>
+
+          <div class="calendar-legend">
+            <span><i class="legend-box safe"></i> Sin accidentes</span>
+            <span><i class="legend-box warning"></i> Tipo A / B</span>
+            <span><i class="legend-box danger"></i> Tipo C</span>
+            <span><i class="legend-box future"></i> No transcurrido</span>
+          </div>
+
+          <div class="calendar-weekdays">
+            <span>Dom</span><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span>
+          </div>
+
+          <div id="safetyCalendarGrid" class="calendar-grid"></div>
+        </section>
+      </section>
+    </section>
+
+    <section class="card filters-card">
+      <div class="section-title">
+        <div>
+          <p class="eyebrow">Consulta</p>
+          <h2>Filtros</h2>
+        </div>
+        <span id="statusText" class="status-text">Selecciona un periodo</span>
+      </div>
+
+      <div class="filters-grid">
+        <label>
+          Mina
+          <select id="filterMine">
+            <option value="Santa Maria">Santa Maria</option>
+            <option value="Unificación/Hallazgo">Unificación/Hallazgo</option>
+          </select>
+        </label>
+
+        <label>
+          Desde
+          <input id="filterFrom" type="date" />
+        </label>
+
+        <label>
+          Hasta
+          <input id="filterTo" type="date" />
+        </label>
+
+        <button id="applyFilters" class="primary" type="button">
+          Aplicar filtros
+        </button>
+      </div>
+    </section>
+<section class="kpi-grid">
+      <article class="kpi-card">
+        <span>Metros lineales</span>
+        <strong id="kpiMl">0.00 m</strong>
+      </article>
+
+      <article class="kpi-card">
+        <span>Volumen barrenado</span>
+        <strong id="kpiM3">0.00 m³</strong>
+      </article>
+
+      <article class="kpi-card mineral">
+        <span>Mineral · Metros lineales</span>
+        <strong id="kpiMineralMl">0.00 m</strong>
+      </article>
+
+      <article class="kpi-card mineral">
+        <span>Mineral · Volumen</span>
+        <strong id="kpiMineralM3">0.00 m³</strong>
+      </article>
+
+      <article class="kpi-card">
+        <span>Tepetate · Metros lineales</span>
+        <strong id="kpiTepetateMl">0.00 m</strong>
+      </article>
+
+      <article class="kpi-card">
+        <span>Tepetate · Volumen</span>
+        <strong id="kpiTepetateM3">0.00 m³</strong>
+      </article>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="card chart-card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Producción diaria</p>
+            <h2>Barrenación por día</h2>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="dailyChart"></canvas>
+        </div>
+      </article>
+
+      <article class="card summary-card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Distribución</p>
+            <h2>Por tipo de obra</h2>
+          </div>
+        </div>
+        <div id="typeSummary" class="summary-list"></div>
+      </article>
+
+      <article class="card summary-card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Material</p>
+            <h2>Mineral / Tepetate</h2>
+          </div>
+        </div>
+        <div id="materialSummary" class="summary-list"></div>
+      </article>
+    </section>
+
+
+    <details class="card collapsible-card">
+      <summary class="collapsible-summary">
+        <div>
+          <p class="eyebrow">Detalle</p>
+          <h2>Registros de barrenación</h2>
+        </div>
+        <span class="summary-hint">Mostrar / ocultar</span>
+      </summary>
+
+      <div class="table-wrap collapsible-content">
+        <table>
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Turno</th>
+              <th>Responsable</th>
+              <th>Obra</th>
+              <th>Tipo</th>
+              <th>Metros lineales</th>
+              <th>m³</th>
+              <th>Material</th>
+            </tr>
+          </thead>
+          <tbody id="detailBody">
+            <tr>
+              <td colspan="8" class="empty-cell">Sin datos cargados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <section class="module-header">
+      <div>
+        <p class="eyebrow">Movimiento de material</p>
+        <h2>Rezagado y acarreo</h2>
+      </div>
+    </section>
+
+    <section class="kpi-grid rezagado-kpis">
+      <article class="kpi-card">
+        <span>Toneladas movidas</span>
+        <strong id="kpiRezTotal">0.00 t</strong>
+      </article>
+
+      <article class="kpi-card mineral">
+        <span>Mineral movido</span>
+        <strong id="kpiRezMineral">0.00 t</strong>
+      </article>
+
+      <article class="kpi-card">
+        <span>Tepetate movido</span>
+        <strong id="kpiRezTepetate">0.00 t</strong>
+      </article>
+
+      <article class="kpi-card">
+        <span>Extracción a patio</span>
+        <strong id="kpiRezPatio">0.00 t</strong>
+      </article>
+    </section>
+
+    <section class="dashboard-grid rezagado-grid">
+      <article class="card chart-card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Movimiento diario</p>
+            <h2>Toneladas por día</h2>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="rezDailyChart"></canvas>
+        </div>
+      </article>
+
+      <article class="card summary-card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Equipos</p>
+            <h2>Toneladas por equipo</h2>
+          </div>
+        </div>
+        <div id="equipmentSummary" class="summary-list"></div>
+      </article>
+    </section>
+
+    <details class="card collapsible-card">
+      <summary class="collapsible-summary">
+        <div>
+          <p class="eyebrow">Detalle</p>
+          <h2>Registros de rezagado y acarreo</h2>
+        </div>
+        <span class="summary-hint">Mostrar / ocultar</span>
+      </summary>
+
+      <div class="table-wrap collapsible-content">
+        <table>
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Turno</th>
+              <th>Equipo</th>
+              <th>Material</th>
+              <th>Origen</th>
+              <th>Destino</th>
+              <th>Movimientos</th>
+              <th>Unidad</th>
+              <th>Toneladas</th>
+            </tr>
+          </thead>
+          <tbody id="rezDetailBody">
+            <tr>
+              <td colspan="9" class="empty-cell">Sin datos cargados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+
+    <section class="module-header">
+      <div>
+        <p class="eyebrow">Disponibilidad</p>
+        <h2>Estado de equipos</h2>
+      </div>
+    </section>
+
+    <section class="kpi-grid equipment-kpis">
+      <article class="kpi-card">
+        <span>Disponibilidad del periodo</span>
+        <strong id="kpiAvailability">0.0%</strong>
+      </article>
+
+      <article class="kpi-card">
+        <span>Equipos actualmente disponibles</span>
+        <strong id="kpiCurrentAvailable">0 / 0</strong>
+      </article>
+
+      <article class="kpi-card mineral">
+        <span>Equipos actualmente fuera de servicio</span>
+        <strong id="kpiCurrentOut">0</strong>
+      </article>
+    </section>
+
+    <section class="dashboard-grid equipment-grid">
+      <article class="card chart-card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Comportamiento diario</p>
+            <h2>Disponibilidad por día</h2>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="availabilityChart"></canvas>
+        </div>
+      </article>
+
+      <article class="card summary-card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Indisponibilidad</p>
+            <h2>Causas principales</h2>
+          </div>
+        </div>
+        <div id="failureSummary" class="summary-list"></div>
+      </article>
+
+      <article class="card summary-card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Por equipo</p>
+            <h2>Disponibilidad acumulada</h2>
+          </div>
+        </div>
+        <div id="equipmentAvailabilitySummary" class="summary-list"></div>
+      </article>
+    </section>
+
+    <details class="card collapsible-card">
+      <summary class="collapsible-summary">
+        <div>
+          <p class="eyebrow">Detalle</p>
+          <h2>Estado de equipos por turno</h2>
+        </div>
+        <span class="summary-hint">Mostrar / ocultar</span>
+      </summary>
+
+      <div class="table-wrap collapsible-content">
+        <table>
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Turno</th>
+              <th>Equipo</th>
+              <th>Estado</th>
+              <th>Motivo</th>
+              <th>Comentarios</th>
+            </tr>
+          </thead>
+          <tbody id="equipmentDetailBody">
+            <tr>
+              <td colspan="6" class="empty-cell">Sin datos cargados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+
+    <section class="module-header">
+      <div>
+        <p class="eyebrow">Indicadores complementarios</p>
+        <h2>Planta y obras especiales</h2>
+      </div>
+    </section>
+
+    <section class="compact-triple-grid">
+      <article class="card compact-module">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Salida de mineral</p>
+            <h2>Acarreo a planta</h2>
+          </div>
+        </div>
+
+        <div class="compact-kpi">
+          <span>Toneladas enviadas</span>
+          <strong id="kpiPlantTons">0.00 t</strong>
+        </div>
+
+        <div class="compact-chart-wrap">
+          <canvas id="plantChart"></canvas>
+        </div>
+
+        <div class="compact-subsection">
+          <h3>Toneladas por procedencia</h3>
+          <div id="plantOriginSummary" class="summary-list"></div>
+        </div>
+
+        <details class="compact-details">
+          <summary>Ver viajes a planta</summary>
+          <div class="table-wrap compact-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Turno</th>
+                  <th>Responsable</th>
+                  <th>Tonelaje</th>
+                  <th>Procedencia</th>
+                </tr>
+              </thead>
+              <tbody id="plantDetailBody">
+                <tr>
+                  <td colspan="5" class="empty-cell">Sin datos cargados.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </article>
+
+      <article id="stopeMateModule" class="card compact-module">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Barrenación especial</p>
+            <h2>Stope Mate</h2>
+          </div>
+        </div>
+
+        <div class="compact-kpi">
+          <span>Metros barrenados</span>
+          <strong id="kpiStopeMate">0.00 m</strong>
+        </div>
+
+        <div class="compact-chart-wrap">
+          <canvas id="stopeMateChart"></canvas>
+        </div>
+      </article>
+
+      <article id="serviceDrillModule" class="card compact-module">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Obra especial</p>
+            <h2>Barreno de servicio</h2>
+          </div>
+        </div>
+
+        <div class="compact-kpi">
+          <span>Avance en el periodo</span>
+          <strong id="kpiServiceDrill">0.00 m</strong>
+        </div>
+
+        <div class="compact-chart-wrap">
+          <canvas id="serviceDrillChart"></canvas>
+        </div>
+      </article>
+    </section>
+
+
+  </main>
+
+  <script src="dashboard.js?v=10"></script>
+</body>
+</html>
